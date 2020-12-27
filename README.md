@@ -15,7 +15,7 @@ Please follow these steps
 7. After the execution is complete, you can login to the created VM with command 'vagrant ssh'
 8. Testing if aws-cli is working by running command 'aws --version'
 9. If aws-cli command auto-completion is not working then running command 'complete -C /usr/local/bin/aws_completer aws'
-10. Test it by running command 'aws iam list-users --profile <YOUR IAM USER>'
+10. Test it by running command 'aws iam list-users --profile <<YOUR IAM USER>>'
   
 Here are examples for **Linux or Gitbash**
 ```
