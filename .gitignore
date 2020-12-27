@@ -1,5 +1,5 @@
-# Compiled class file
-*.class
+# Credentials file
+*.cvs
 
 # Log file
 *.log
