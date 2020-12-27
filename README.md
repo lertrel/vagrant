@@ -10,7 +10,7 @@ Please follow these steps
 2. Make sure of having Vagrant installed
 3. Clone the current git repository
 4. cd vagrant/aws
-5. Copy an AWS credentials file (.csv) in vagrant/aws, and rename the file to 'credentials.csv'
+5. Copy an AWS credentials file (.csv) and place it into vagrant/aws, and rename the file to 'credentials.csv'
 6. Still inside vagrant/aws, running command 'vagrant up'
 7. After the execution is complete, you can login to the created VM with command 'vagrant ssh'
 8. Testing if aws-cli is working by running command 'aws --version'
