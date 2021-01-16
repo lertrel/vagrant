@@ -46,6 +46,7 @@ Please follow these steps
 4. cd vagrant/multi-servers
 
 **If you want to try example, follow the below steps**
+
 5. vagrant up --no-parallel
 6. You will be asked "Running ansible playbooks? [y/n]:
 7. The answer should be 'n', then 3 new VMs (lb1, web1, web2) will be created
