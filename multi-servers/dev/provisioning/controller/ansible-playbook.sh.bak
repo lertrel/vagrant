@@ -1,0 +1,12 @@
+#!/bin/bash
+
+declare -a playbooks
+
+CUR_DIR=$PWD
+p3='ansible_python_intepreter=/usr/bin/python3'
+
+
+for line in "${playbooks[@]}"
+do
+	ansible-playbook $line -e $p3
+done

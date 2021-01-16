@@ -1,0 +1,15 @@
+upstream test {
+	{% for server in groups.all %}
+	{% if server|regex_replace('^web\d+$', 'web') == 'web' %}
+	server {{hostvars[server]['ansible_host']}};
+	{% endif %}
+	{% endfor %}
+}
+
+server {
+	listen 80;
+
+	location / {
+		proxy_pass http://test;
+	}
+}

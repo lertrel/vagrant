@@ -1,0 +1,145 @@
+config = MultiServer.get_parent_vagrant_config
+context = MultiServer.get_context
+CTRL_BASE_IP = context["BASE_IP"]
+CTRL_CUR_DIR = context["CURRENT_DIR"]
+
+playbooks = context["PLAYBOOKS"]
+
+
+
+def create_ansible_inventory
+
+		puts "create_ansible_inventory"
+		puts MultiServer.get_vm_repository_filename
+
+		repo = MultiServer::VMMapRepository.new(MultiServer.get_vm_repository_filename)
+		repo.load
+
+		vms = repo.list
+
+		filename = "inventory.txt"
+
+		$inventory = "echo \"controller ansible_connection=local ansible_python_interpreter=/usr/bin/python3\" > #{filename}\n"
+
+		vms.each do |node|
+			key = node["name"]
+			val = node["ip"]
+			$inventory << "echo \"#{key} ansible_host=#{val} ansible_python_interpreter=/usr/bin/python3 ansible_user=vagrant ansible_ssh_private_key_file=.ssh-keys/#{key}_private_key\" >> #{filename}\n"	
+		end
+
+		puts "----------------------------------------------------"
+		puts filename
+		puts "----------------------------------------------------"
+		puts $inventory
+		puts "----------------------------------------------------"
+		puts "----------------------------------------------------"
+
+end
+
+def copy_target_servers_keys(controller)
+
+		vmPathsLocal = "#{CTRL_CUR_DIR}/.vagrant/machines"
+		vmPaths = "/vagrant/.vagrant/machines"
+		keyPath = ".ssh-keys"
+		keySuffix = "_private_key"
+		vagrantKeyFile = "/virtualbox/private_key"
+		keyMode = "644"
+
+		$sshScript = <<-SCRIPT
+
+mkdir -p .ssh-keys
+
+		SCRIPT
+
+		Dir.foreach(vmPathsLocal) do |entry|
+			case entry
+			when ".", "..", /^\..+/
+			else
+				vmPath = File.join(vmPathsLocal, entry)
+				if File.directory?(vmPath)
+					$sshScript << "cp #{vmPath}#{vagrantKeyFile} #{keyPath}/#{entry}#{keySuffix}\n"
+					$sshScript << "chmod #{keyMode} #{keyPath}/#{entry}#{keySuffix}\n"
+				end
+			end
+		end
+
+end
+
+def run_playbooks(playbooks)
+
+		$playbookScript = "p3='ansible_python_interpreter=/usr/bin/python3'\n"
+		$playbookScript << "/vagrant/provisioning/controller/ansible-cfg.sh /etc/ansible/ansible.cfg /home/vagrant/inventory.txt\n"
+		#$playbookScript = "cd /home/vagrant\n"
+			
+		playbooks.each do |playbook|
+
+			$playbookScript << "ansible-playbook #{playbook} -e $p3\n"
+		end
+
+		puts "----------------------------------------------------"
+		puts "Playbooks shell scripts"
+		puts "----------------------------------------------------"
+		puts $playbookScript
+		puts "----------------------------------------------------"
+		puts "----------------------------------------------------"
+
+end
+
+
+
+config.vm.define "ansible-controller1" do |controller|
+
+	#controller.trigger.before :up, :provision do |trigger|
+	#	trigger.info = "create_ansible_inventory"
+	#	trigger.ruby do |env, machine|
+			create_ansible_inventory
+			run_playbooks(playbooks)
+	#	end
+	#end
+
+	controller.vm.provider "virtualbox" do |vb, override|
+
+		controller.vm.box = "hashicorp/bionic64"
+		override.vm.network "private_network", ip: "#{CTRL_BASE_IP}.11"
+		override.vm.hostname = "ansible-controller1"
+		vb.name = "ansible-controller1"
+		vb.memory = "512"
+		vb.cpus = 1
+    
+		controller.vm.provision "basic", type: "shell", inline: <<-SHELL
+			sudo apt-get update
+			sudo apt-get install -y tree
+			sudo apt-get install -y unzip
+			sudo apt-get install -y git 
+			sudo apt-get update
+			sudo apt-get install -y software-properties-common
+			sudo apt-add-repository --yes --update ppa:ansible/ansible
+			sudo apt-get install -y ansible
+		SHELL
+
+		controller.vm.provision "python", type: "shell", inline: <<-SHELL
+			python --version
+			sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+			sudo update-alternatives --set python /usr/bin/python3
+			python --version
+		SHELL
+
+		controller.vm.provision "create_ansible_inventory", type: "shell", inline: $inventory
+
+		controller.vm.provision "copy_target_servers_keys", type: "shell", path: "provisioning/controller/ssh-keys.sh"
+
+		#controller.vm.provision "ansible-install", type: "ansible_local" do |ansible|
+		#	ansible.playbook = "provisioning/controller/playbooks/list.yml"
+		#	ansible.become = true
+		#	ansible.limit = "all"
+		#end
+
+		controller.vm.provision "ansible-cfg", type: "shell", inline: <<-SHELL
+			/vagrant/provisioning/controller/ansible-cfg.sh /etc/ansible/ansible.cfg /home/vagrant/inventory.txt
+		SHELL
+
+		controller.vm.provision "ansible-playbook", type: "shell", inline: $playbookScript
+
+	end
+
+end

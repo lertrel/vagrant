@@ -1,0 +1,20 @@
+config = MultiServer.get_parent_vagrant_config
+context = MultiServer.get_context
+LB1_BASE_IP = context["BASE_IP"]
+
+config.vm.define "lb1" do |node|
+
+  node.vm.provider "virtualbox" do |vb, override|
+
+    node.vm.box = "hashicorp/bionic64"
+    override.vm.network "private_network", ip: "#{LB1_BASE_IP}.12"
+    override.vm.hostname = "lb1"
+    vb.name = "lb1"
+    vb.memory = "512"
+    vb.cpus = 1
+
+  end
+
+  MultiServer.register_vm_ip("lb1", "#{LB1_BASE_IP}.12")
+
+end

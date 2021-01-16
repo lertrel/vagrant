@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Checking that folder commands should be exist
+# to prevent running this file outside dev folder,
+# and if the commands folder found, then changing
+# current directory to commands
+pwd
+# Check if a production directory exist otherwise exit
+if [ ! -d "commands" ]
+then
+	echo "commands DEV_DIR is not a directory"
+	read x
+	exit
+fi
+
+cd "commands"
+
+
+
+# Path constants
+CURRENT_DIR=$PWD
+PROD_DIR="../.."
+DEV_DIR=".."
+#PROD_DIR="prod"
+#DEV_DIR="dev"
+PROD_TEMP_DIR="$PROD_DIR/.commit"
+
+
+
+echo "Sync provisioning from dev to production"
+
+# Check if a production directory exist otherwise exit
+if [ ! -d "$DEV_DIR" ]
+then
+	echo "$DEV_DIR is not a directory"
+	read x
+	exit
+fi
+
+# Check if a dev directory exist otherwise exit
+if [ ! -d "$PROD_DIR" ]
+then
+	echo "$PROD_DIR is not a directory"
+	read x
+	exit
+fi
+
+mkdir -p $PROD_TEMP_DIR
+cd $DEV_DIR
+
+# Copy *.commit file from <DEV> to <PROD>/.commit
+#echo "find $DEV_DIR -type f -name '*.commit' -print0 | sed -e 's/\.commit//' | xargs --no-run-if-empty -0 cp --parents -t $PROD_TEMP_DIR"
+find $DEV_DIR -type f -name '*.commit' -print0 | sed -e 's/\.commit//' | xargs --no-run-if-empty -0 cp --parents -t $PROD_TEMP_DIR
+ls -R | grep '.commit'
+# Remove .commit from file name
+find $PROD_TEMP_DIR -type f -name "*.commit" -exec bash -c "echo {} | sed -e 's/\.commit$//' | xargs --no-run-if-empty mv {}" \;
+# Replace production files with committed files
+cd $PROD_TEMP_DIR/dev
+cp -rf . ../../
+
+read x
+

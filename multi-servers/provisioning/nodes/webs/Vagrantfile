@@ -1,0 +1,25 @@
+config = MultiServer.get_parent_vagrant_config
+context = MultiServer.get_context
+WEB_BASE_IP = context["BASE_IP"]
+
+WEB_NUM = 2
+
+(1..WEB_NUM).each do |i|
+  
+  config.vm.define "web#{i}" do |web|
+
+    web.vm.provider "virtualbox" do |vb, override|
+
+      override.vm.network "private_network", ip: "#{WEB_BASE_IP}.2#{i}"
+      override.vm.hostname = "web#{i}"
+      vb.name = "web#{i}"
+      vb.memory = "512"
+      vb.cpus = 1
+
+    end
+
+    MultiServer.register_vm_ip("web#{i}", "#{WEB_BASE_IP}.2#{i}")
+
+  end
+
+end
