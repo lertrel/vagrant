@@ -34,3 +34,65 @@ $ complete -C /usr/local/bin/aws_completer aws
 $ aws iam list-users --profile <YOUR IAM USER>
 
 ```
+
+### 2. Multi-servers Template
+
+A builing block for creating multi-servers platform using Vagrant
+
+Please follow these steps
+1. Make sure of having Virtualbox installed
+2. Make sure of having Vagrant installed
+3. Clone the current git repository
+4. cd vagrant/multi-servers
+
+**If you want to try example, follow the below steps**
+5. vagrant up --no-parallel
+6. You will be asked "Running ansible playbooks? [y/n]:
+7. The answer should be 'n', then 3 new VMs (lb1, web1, web2) will be created
+8. execute vagrant up --no-parallel (for the second time)
+9. You will be asked "Running ansible playbooks? [y/n]: (again)
+10. But this time answer 'y', then a new VM ansible-controller1 will be created
+11. Example ansible playbooks will be executed on host ansible-controller1
+
+Here are examples for **Linux or Gitbash**
+```
+cd vagrant/multi-servers
+vagrant up --no-parallel
+It's running from directory - <WORKING DIR>/vagrant/multi-servers
+nodesDir = <WORKING DIR>/vagrant/multi-servers/provisioning/nodes ------------------------------------------------
+The following Ansible playbooks are found:
+Play book --> provisioning/lbs/playbooks/1-lb1-prep.yml
+Play book --> provisioning/webs/playbooks/2-all-webs-prep.yml
+Play book --> provisioning/lbs/playbooks/3-lb1-proxy.yml
+Running ansible playbooks? [y/n]: n
+
+...
+Wait patiently 
+(it could be over 15 minutes, depending on cpu/network)
+...
+
+vagrant up --no-parallel
+It's running from directory - <WORKING DIR>/vagrant/multi-servers
+nodesDir = <WORKING DIR>/vagrant/multi-servers/provisioning/nodes ------------------------------------------------
+The following Ansible playbooks are found:
+Play book --> provisioning/lbs/playbooks/1-lb1-prep.yml
+Play book --> provisioning/webs/playbooks/2-all-webs-prep.yml
+Play book --> provisioning/lbs/playbooks/3-lb1-proxy.yml
+Running ansible playbooks? [y/n]: y
+
+...
+Wait patiently 
+(it could be over 15 minutes, depending on cpu/network)
+...
+
+curl http://172.17.10.12/
+<html><header><title>Welcome to Server 1</title></header><body><H1>Hello from Server1</H1></body></html>"
+curl http://172.17.10.12/
+<html><header><title>Welcome to Server 2</title></header><body><H1>Hello from Server1</H1></body></html>"
+
+
+```
+
+**Setting your own servers**
+
+**Tips**
