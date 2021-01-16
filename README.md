@@ -141,4 +141,54 @@ end
 
 ```
 
+18. If you wish to run ansible playbook(s), create folder playbook in the same folder of each sub vagrant file, and please ansible playbook(s) in there.
+Ex. "provision/nodes/docker1/playbooks", "provision/nodes/db1/playbooks", etc.
+19. By default, the playbooks will be executed unpredictably in the same order they were found in your filesystem
+20. If some playbooks have to be executed in specific order, then place an interger in front of file name.
+Ex. 
+- "provision/nodes/docker1/playbooks/1-install-docker.yml"
+- "provision/nodes/docker1/playbooks/4-deploy-services.yml"
+- "provision/nodes/docker1/playbooks/5-link-services-to-db.yml"
+- "provision/nodes/db1/playbooks/2-install-db.yml"
+- "provision/nodes/db1/playbooks/3-load-data.yml"
+
+In this case, the ansible playbooks (which have an interger in front of there names) will be executed first in ascending, and files without number will still be executed randomly.
+
+- "provision/nodes/docker1/playbooks/1-install-docker.yml"
+- "provision/nodes/db1/playbooks/2-install-db.yml"
+- "provision/nodes/db1/playbooks/3-load-data.yml"
+- "provision/nodes/docker1/playbooks/4-deploy-services.yml"
+- "provision/nodes/docker1/playbooks/5-link-services-to-db.yml"
+
+Here are examples for **Linux or Gitbash**
+```
+cd vagrant/multi-servers
+vagrant up --no-parallel
+It's running from directory - <WORKING DIR>/vagrant/multi-servers
+nodesDir = <WORKING DIR>/vagrant/multi-servers/provisioning/nodes ------------------------------------------------
+The following Ansible playbooks are found:
+...
+Running ansible playbooks? [y/n]: n
+
+...
+Wait patiently 
+(it could be over 15 minutes, depending on cpu/network)
+...
+
+vagrant up --no-parallel
+It's running from directory - <WORKING DIR>/vagrant/multi-servers
+nodesDir = <WORKING DIR>/vagrant/multi-servers/provisioning/nodes ------------------------------------------------
+The following Ansible playbooks are found:
+...
+Running ansible playbooks? [y/n]: y
+
+...
+Wait patiently 
+(it could be over 15 minutes, depending on cpu/network)
+...
+
+```
+
+**NOTE that if there's no ansible playbooks found, VM ansible-controller1 will not be created**
+
 **Tips**
