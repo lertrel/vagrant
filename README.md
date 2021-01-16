@@ -37,7 +37,9 @@ $ aws iam list-users --profile <YOUR IAM USER>
 
 ### 2. Multi-servers Template
 
-A builing block for creating multi-servers platform using Vagrant
+A builing block for creating multi-servers platform using Vagrant. 
+This approach is different from a single Vagrantfile approach suggested in Vagrant website, 
+but rather using a provided main Vagrantfile to load number of separated sub Vagrantfile(s)
 
 Please follow these steps
 1. Make sure of having Virtualbox installed
@@ -102,5 +104,41 @@ curl http://172.17.10.12/
 - Any http request to lb1 (http://172.17.10.12/) will be re-routed to web1 & web2 alternatively 
 
 **Setting your own servers**
+
+Following the above examples, setting your own multi-servers platform can be done in quite similar way (see below)
+
+12. If you run the above example, please complete steps 13 & 14 ...
+13. Halt the example VMs using vagrant halt
+14. Destroy the example VMs using vagrant destroy
+15. Make sure your are still in folder "vagrant/multi-servers", then remove all files and folders __under__ folder "provision/nodes"
+16. Under folder "provision/nodes" Create a new folder for each sub Vagrantfile Ex. "provision/nodes/docker1/Vagrantfile", "provision/nodes/db1/Vagrantfile", etc.
+17. Instead of standard Vagrantfile syntax, each Vagrantfile will be required to add some specific variants as below:
+
+```
+
+config = MultiServer.get_parent_vagrant_config
+context = MultiServer.get_context
+...
+
+config.vm.define "..." do |node|
+
+  node.vm.provider "virtualbox" do |vb, override|
+
+    node.vm.box = "..."
+    override.vm.network "private_network", ip: "..."
+    override.vm.hostname = "..."
+    vb.name = "..."
+    vb.memory = "..."
+    vb.cpus = 1
+    
+    ...
+
+  end
+
+  MultiServer.register_vm_ip("...", "...")
+
+end
+
+```
 
 **Tips**
