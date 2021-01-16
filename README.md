@@ -91,8 +91,15 @@ curl http://172.17.10.12/
 curl http://172.17.10.12/
 <html><header><title>Welcome to Server 2</title></header><body><H1>Hello from Server1</H1></body></html>"
 
-
 ```
+
+**Well, what's just happened**
+
+- The example here is another version of a basic vagrant/ansible tutorial found on internet
+- Basically, using vagrant to create 3 servers lb1 (loadbalancer), web1 & web 2 (webservers nodes)
+- Then, creating another server (ansible-controller1) for running ansible playbooks to configure each server
+- After complete all ansible-playbooks, lb1 will be acted as a loanbalancer for web1 & web2
+- Any http request to lb1 (http://172.17.10.12/) will be re-routed to web1 & web2 alternatively 
 
 **Setting your own servers**
 
