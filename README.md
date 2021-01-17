@@ -225,3 +225,6 @@ So that you are able analyze, if all activities are in place and order before ac
 To make use of the rehearsal environment, please follow these below steps:
 
 1. After you places all of your Vagrantfiles and related files under folder "provisioning/nodes", then change to directory "vagrant/multi-servers/dev"
+2. Running command ./commands/update.sh
+3. Then answser 'Y', when you are asked "Are you sure? [Y/n]"
+
