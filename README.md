@@ -209,3 +209,11 @@ Wait patiently
 **NOTE that if there's no ansible playbooks found, VM ansible-controller1 will not be created**
 
 **Tips**
+
+By involving may Vagrantfile(s), things can get slight more complex, and finding an error after waiting for almost an hour could be quite frustrating.
+
+To avoid this:
+
+1. Always run 'vagrant validate' before 'vagrant up' in order to let vagrant spot any syntax errors and fix them before running 'vagrant up'
+
+2. For some cases 'vagrant validate' might not be enough, to 
