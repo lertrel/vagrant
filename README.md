@@ -50,11 +50,13 @@ Please follow these steps
 **If you want to try example, follow the below steps**
 
 5. vagrant up --no-parallel
-6. You will be asked "Running ansible playbooks? [y/n]:
-7. The answer should be 'n', then 3 new VMs (lb1, web1, web2) will be created
+6. You will be asked "Running ansible playbooks? [y/n]:"
+(The answer should be 'n' as we want all other VMs to created and ready 
+before the ansible controller VM be created)
+7. Then 3 new VMs (lb1, web1, web2) will be created
 8. execute vagrant up --no-parallel (for the second time)
 9. You will be asked "Running ansible playbooks? [y/n]: (again)
-10. But this time answer 'y', then a new VM ansible-controller1 will be created
+10. But this time answer 'y' to create ansible controller VM, then a new VM "ansible-controller1" will be created
 11. Example ansible playbooks will be executed on host ansible-controller1
 
 Here are examples for **Linux or Gitbash**
@@ -101,17 +103,21 @@ curl http://172.17.10.12/
 - Basically, using vagrant to create 3 servers lb1 (loadbalancer), web1 & web 2 (webservers nodes)
 - Then, creating another server (ansible-controller1) for running ansible playbooks to configure each server
 - After complete all ansible-playbooks, lb1 will be acted as a loanbalancer for web1 & web2
-- Any http request to lb1 (http://172.17.10.12/) will be re-routed to web1 & web2 alternatively 
+- Any http request to lb1 (http://172.17.10.12/) will be re-routed to web1 & web2 alternatively
+- So why do we need a new VM for running ansible??? 
+- If your local computer is running on Windows, ansible cannot be installed, so a linux VM is needed as ansible host
+- Even if your local computer is running on linux or MacOS, having a disposable environment for running ansible will keep your local computer clean.
+- Moreover, the solution is highly portable and can be redo from scratch anywhere.
 
 **Setting your own servers**
 
 Following the above examples, setting your own multi-servers platform can be done in quite similar way (see below)
 
-12. If you run the above example, please complete steps 13 & 14 ...
-13. Halt the example VMs using vagrant halt
-14. Destroy the example VMs using vagrant destroy
+12. If you run the above example, please complete steps 13 & 14 otherwise skip to step 15 ...
+13. Halt the example VMs using 'vagrant halt'
+14. Destroy the example VMs using 'vagrant destroy'
 15. Make sure your are still in folder "vagrant/multi-servers", then remove all files and folders __under__ folder "provision/nodes"
-16. Under folder "provision/nodes" Create a new folder for each sub Vagrantfile Ex. "provision/nodes/docker1/Vagrantfile", "provision/nodes/db1/Vagrantfile", etc.
+16. Under folder "provision/nodes" creating a new folder for each of your sub Vagrantfile Ex. "provision/nodes/docker1/Vagrantfile", "provision/nodes/db1/Vagrantfile", etc.
 17. Instead of standard Vagrantfile syntax, each Vagrantfile will be required to add some specific variants as below:
 
 ```
@@ -159,6 +165,17 @@ In this case, the ansible playbooks (which have an interger in front of there na
 - "provision/nodes/db1/playbooks/3-load-data.yml"
 - "provision/nodes/docker1/playbooks/4-deploy-services.yml"
 - "provision/nodes/docker1/playbooks/5-link-services-to-db.yml"
+
+21. Finaally it's time for 'vagrant up --no-parallel'
+22. You will be asked "Running ansible playbooks? [y/n]:"
+(The answer should be 'n' as we want all other VMs to created and ready 
+before the ansible controller VM be created)
+23. Then your associated sub Vagrant files under the folder "provision/nodes" will be executed 1 by 1
+24. When all done, then execute vagrant up --no-parallel (for the second time)
+25. You will be asked "Running ansible playbooks? [y/n]: (again)
+26. But this time answer 'y' to create ansible controller VM, then a new VM "ansible-controller1" will be created
+27. All ansible playbooks will be executed on host ansible-controller1
+
 
 Here are examples for **Linux or Gitbash**
 ```
