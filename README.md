@@ -219,12 +219,24 @@ A. Always run 'vagrant validate' before 'vagrant up' in order to let vagrant spo
 B. For some cases 'vagrant validate' might not be enough for preventing runtime errors.
 
 In order to reduce number of rumtime errors, this vagrant multi-servers template is shipped with an environment for rehearsal.
-With this environment, you can use ruby to run the main Vagrantfile and all the sub Vagrantfile so as to have preview of what they are going to do.
-So that you are able analyze, if all activities are in place and order before actually running them using 'vagrant up'
+With this environment, so instead of vagrant, you can use ruby to run the main Vagrantfile and all the sub Vagrantfile(s)so as to have preview of what they are going to do.
+So that you are able analyze, if all activities are in place and order before actually running them using 'vagrant up'.
+
+**NOTE that on Windows, a program for mimicing linux environment like Gitbash, Cmder, etc. is needed for running shell scripts locally** 
 
 To make use of the rehearsal environment, please follow these below steps:
 
 1. After you places all of your Vagrantfiles and related files under folder "provisioning/nodes", then change to directory "vagrant/multi-servers/dev"
 2. Running command ./commands/update.sh
 3. Then answser 'Y', when you are asked "Are you sure? [Y/n]"
-
+4. Then press 'Enter', this step will replicate all the files from "vagrant/multi-servers" and "vagrant/multi-servers/provisioning/nodes", into "vagrant/multi-servers/dev"
+5. Before we can perform our rehearsal using ruby, we need a new VM as an environment so run 'vagrant up' inside folder "vagrant/multi-servers/dev"
+6. When the new VM has been created, then login using 'vagrant ssh' (still from inside "vagrant/multi-servers/dev")
+7. In the rehearsal VM, test if all the Vagrantfile(s) by running command 'ruby /vagrant/vagrant-dev.rb'
+8. In the console, preview of all activities in the Vagrantfile(s) will be shown for your analysis in similar order if they were executed using vagrant.
+9. Using vi or to make changes to any files under folder "/vagrant/provisioning/nodes" as you wish
+10. Then run command /vagrant/commands/commit.sh /vagrant/provision/nodes/<YOUR FILE PATH AND NAME> on each file you editted.
+11. Type 'exit' and press <ENTER> to logout from the rehearsal VM
+12. Running command ./commands/push.sh and then press <ENTER>
+13. All the changed files will be updated back to its origin in "vagrant/multi-servers"
+14. Now we can change directory back to "vagrant/multi-servers" and executing the Vagrantfile(s) with vagrant
