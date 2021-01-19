@@ -10,7 +10,7 @@ require 'json'
 require 'fileutils'
 require File.join(CURRENT_DIR, 'multi-server.rb')
 
-BASE_BOX = "hashicorp/bionic64"
+BASE_BOX = "bento/ubuntu-18.04"
 RUN_PLAYBOOK_BY_DEFAULT = false
 RUN_PLAYBOOK_REMOTE = true
 RUN_PLAYBOOK_AS_BATCH= false
